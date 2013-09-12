@@ -1,0 +1,132 @@
+# Note that all packages and scripts will be installed/run in their order of appearance.
+# Please look at our documentation page for more information. You can find it at KoalityCode.com/documentation 
+
+# The first section is language definition, where you define which languages and their respective versions your project uses.
+languages:
+  jvm: 1.6
+
+# The setup section allows you to define and describe your testing environment.
+setup:
+# The packages section defines dependencies your project needs.
+- packages:
+
+  # Define system package dependencies here. These are all the packages that you use that are installed by running "apt-get install X"
+  - system:
+
+# This section defines databases used for your tests. They are local to the VMs the tests are run on.
+# Currently, only postgres and mysql are supported. This configuration includes both (you can also set passwords).
+- databases:
+  - mysql:
+    - name: test_db
+      username: test_user
+  - postgres:
+    - name: test_db
+      username: test_user
+
+# In this section you can add shell scripts for any kind of installation operations that you wish to add that were not already covered.
+- scripts:
+
+# The following section defines how to build your code. Each section can be given an arbitrary name.
+compile:
+  # All scripts must return a proper error code (0 for success).
+  scripts:
+  - mvn compile 0:
+      script: mvn compile
+  - mvn compile 1:
+      path: gs-collections-code-generator
+      script: mvn compile
+  - mvn compile 2:
+      path: gs-collections-forkjoin
+      script: mvn compile
+  - mvn compile 3:
+      path: gs-collections-code-generator-ant
+      script: mvn compile
+  - mvn compile 4:
+      path: unit-tests
+      script: mvn compile
+  - mvn compile 5:
+      path: collections-testutils
+      script: mvn compile
+  - mvn compile 6:
+      path: collections-api
+      script: mvn compile
+  - mvn compile 7:
+      path: scala-unit-tests
+      script: mvn compile
+  - mvn compile 8:
+      path: collections
+      script: mvn compile
+  - mvn compile 9:
+      path: serialization-tests
+      script: mvn compile
+  - mvn compile 10:
+      path: acceptance-tests
+      script: mvn compile
+  - mvn compile 11:
+      path: performance-tests
+      script: mvn compile
+  - mvn compile 12:
+      path: gs-collections-code-generator-maven-plugin
+      script: mvn compile
+
+# The test section is responsible for running tests. All commands from here on will be executed in parallel.
+# Remember not to run any scripts that do batch testing from this point on, since they are not parallelizable.
+test:
+  # Factory scripts that will output test scripts to be run in parallel.
+  factories:
+  - factory .:
+      path: .
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: .\"; done"
+  - factory gs-collections-code-generator:
+      path: gs-collections-code-generator
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: gs-collections-code-generator\"; done"
+  - factory gs-collections-forkjoin:
+      path: gs-collections-forkjoin
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: gs-collections-forkjoin\"; done"
+  - factory gs-collections-code-generator-ant:
+      path: gs-collections-code-generator-ant
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: gs-collections-code-generator-ant\"; done"
+  - factory unit-tests:
+      path: unit-tests
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: unit-tests\"; done"
+  - factory collections-testutils:
+      path: collections-testutils
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: collections-testutils\"; done"
+  - factory collections-api:
+      path: collections-api
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: collections-api\"; done"
+  - factory scala-unit-tests:
+      path: scala-unit-tests
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: scala-unit-tests\"; done"
+  - factory collections:
+      path: collections
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: collections\"; done"
+  - factory serialization-tests:
+      path: serialization-tests
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: serialization-tests\"; done"
+  - factory acceptance-tests:
+      path: acceptance-tests
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: acceptance-tests\"; done"
+  - factory performance-tests:
+      path: performance-tests
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: performance-tests\"; done"
+  - factory gs-collections-code-generator-maven-plugin:
+      path: gs-collections-code-generator-maven-plugin
+      script:
+      - "find . -name \"*[tT]est*.java\" | sed \"s/.*\\/\\(.*\\).java/\\1/\" | while read java; do echo -e \"- mvn -Dtest=$java test:\n    path: gs-collections-code-generator-maven-plugin\"; done"
+
+  # The number of VMs to create to run tests on.
+  machines: 8
+
